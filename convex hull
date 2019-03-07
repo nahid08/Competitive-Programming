@@ -1,0 +1,204 @@
+*
+Nahid Hossain
+Jahangirnagar University
+Roll:54
+*/
+#include<bits/stdc++.h>
+#define ll          long long int
+#define db          double
+#define pf          printf
+#define sf          scanf
+#define ff          first
+#define ss          second
+#define clr         clear()
+#define sz          size()
+#define pb          push_back
+#define mk          make_pair
+#define pi          acos(-1)
+#define inf         123456789
+#define mod         1000000007
+#define ull         unsigned long long int
+#define f(i,k,n)    for(ll i=k;i<n;i++)
+#define fr(i,n,k)   for(i=n;i>=k;i--)
+#define ent(a)      scanf("%lld",&a)
+#define ent2(a,b)   scanf("%lld%lld",&a,&b)
+#define ent3(a,b,c) scanf("%lld%lld%lld",&a,&b,&c)
+#define mem(a)      memset(a,0,sizeof(a))
+#define vec(v,s)    vector<ll>v[s]
+#define arr(a,s)    ll a[s];
+//#define check(n,pos) (n&(1<<pos))
+//#define set(n,pos)  (n|(1<<pos))
+//knight and king//
+int dr[]={2, 2, -2, -2, 1, -1, 1, -1};
+int dc[]={1,-1,  1, -1, 2,  2,-2, -2};
+int dr1[]={0, 0, 0, 1, 1, 1, -1, -1, -1};
+int dc1[]={-1,0, 1,-1, 0, 1, -1, 0,   1};
+int dr2[]={0, 0, 1, -1};
+int dc2[]={1,-1, 0,  0};
+////////////////////////////
+using namespace std;
+ 
+#define ma 100005
+ 
+ 
+ 
+struct point
+{
+ ll x,y;
+};
+ 
+ 
+point arr[ma],ans[ma];
+ 
+stack<point>s;
+ 
+ 
+ll dist(point p,point q)
+{
+ return (p.x-q.x)*(p.x-q.x)+(p.y-q.y)*(p.y-q.y);
+}
+ 
+ 
+ 
+double calc(point A,point B,point C)
+{
+ double a=sqrt((double)(dist(A,B)));
+ 
+ double b=sqrt((double)(dist(B,C)));
+ 
+ 
+ double c=sqrt((double)(dist(C,A)));
+ 
+ return acos((b*b-c*c-a*a)/(-2*a*c));
+ 
+}
+ 
+ 
+ 
+ll orientation(point P,point Q,point R)
+{
+ ll ret=(Q.y-P.y)*(R.x-Q.x)-(Q.x-P.x)*(R.y-Q.y);
+ if(ret<0)return 2;
+ if(ret>0)return 1;
+ return ret;
+}
+ 
+ 
+ 
+bool cmp(point x,point y)
+{
+ ll ret=orientation(arr[0],x,y);
+ if(ret==0)
+ {
+  ll dist1=dist(arr[0],x);
+  ll dist2=dist(arr[0],y);
+ 
+  return dist1<dist2;
+ }
+ else if(ret==2)return true;
+ else return false;
+}
+ 
+ 
+point nexttotop()
+{
+ point p=s.top();s.pop();
+ point res=s.top();
+ s.push(p);
+ return res;
+}
+ 
+ 
+double convex(ll n)
+{
+ ll ymin=arr[0].y,ind=0,i;
+ 
+ for(i=1;i<n;i++)
+ {
+  if(arr[i].y<ymin||(arr[i].y==ymin&&arr[i].x<arr[ind].x))
+  {
+   ymin=arr[i].y;
+   ind=i;
+  }
+ }
+ 
+ 
+ 
+ swap(arr[0],arr[ind]);
+ 
+ sort(&arr[1],&arr[n],cmp);
+ 
+ 
+ s.push(arr[0]);
+ 
+ 
+ f(i,1,n)
+ {
+  while(s.sz>1&&orientation(nexttotop(),s.top(),arr[i])!=2)s.pop();
+  s.push(arr[i]);
+ }
+ 
+ vector<point>v;
+ 
+ while(s.sz>0)
+ {
+  v.pb(s.top());
+  s.pop();
+ }
+ 
+ 
+ if(v.sz<3)return 0;
+ double min1=123456.00;
+ 
+ reverse(v.begin(),v.end());
+ double r1=180;
+ 
+ f(i,0,v.sz)
+ {
+  ll k,j;
+  j=(i+1)%v.sz;
+  k=(i-1+v.sz)%v.sz;
+  double r=calc(v[i],v[j],v[k]);
+  min1=min(min1,(r*r1)/pi);
+ }
+ 
+ 
+ 
+ return min1;
+ 
+ 
+ 
+ 
+ //f(i,0,v.sz)cout<<v[i].x<<" "<<v[i].y<<endl;
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+}
+ 
+ 
+int main()
+{
+ ll n,tc,cas=0;
+ ent(tc);
+ while(tc--)
+ {
+  ent(n);
+  f(i,0,n)cin>>arr[i].x>>arr[i].y;
+  double ans=convex(n);
+  //cout<<ans<<endl;
+ 
+  pf("Case %lld: %.06lf\n",++cas,ans);
+ }
+ 
+ 
+ return 0;
+}
+ 
+ 
