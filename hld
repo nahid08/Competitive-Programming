@@ -1,0 +1,293 @@
+/*
+Nahid Hossain
+Jahangirnagar University
+Roll:54
+*/
+#include<bits/stdc++.h>
+#define ll          long long int
+#define db          double
+#define pf          printf
+#define sf          scanf
+#define ff          first
+#define ss          second
+#define clr         clear()
+#define sz          size()
+#define pb          push_back
+#define mk          make_pair
+#define pi          acos(-1)
+#define inf         9999999999999999
+#define mod         1000000007
+#define ull         unsigned long long int
+#define f(i,k,n)    for(ll i=k;i<n;i++)
+#define fr(i,n,k)   for(i=n;i>=k;i--)
+#define ent(a)      scanf("%lld",&a)
+#define ent2(a,b)   scanf("%lld%lld",&a,&b)
+#define ent3(a,b,c) scanf("%lld%lld%lld",&a,&b,&c)
+#define mem(a)      memset(a,0,sizeof(a))
+#define vec(v,s)    vector<ll>v[s]
+#define arr(a,s)    ll a[s];
+//#define check(n,pos) (n&(1<<pos))
+//#define set(n,pos)  (n|(1<<pos))
+//knight and king//
+int dr[]={2, 2, -2, -2, 1, -1, 1, -1};
+int dc[]={1,-1,  1, -1, 2,  2,-2, -2};
+int dr1[]={0, 0, 0, 1, 1, 1, -1, -1, -1};
+int dc1[]={-1,0, 1,-1, 0, 1, -1, 0,   1};
+int dr2[]={0, 0, 1, -1};
+int dc2[]={1,-1, 0,  0};
+////////////////////////////
+using namespace std;
+
+#define ma 30005
+
+
+ll sub[ma],lev[ma],a[ma],t[ma][17],n;
+vector<ll>adj[ma];
+
+//////////////lca_part//////////////////
+
+
+
+void dfs(ll u,ll par)
+{
+ sub[u]=1;
+ f(i,0,adj[u].sz)
+ {
+  ll p=adj[u][i];
+  if(p==par)continue;
+  lev[p]=lev[u]+1;
+  t[p][0]=u;
+  dfs(p,u);
+  sub[u]+=sub[p];
+ }
+}
+
+
+
+
+void build(ll n)
+{
+ memset(t,-1,sizeof(t));
+
+
+ dfs(0,-1);
+
+
+ ll i,j;
+
+ for(j=1;(1<<j)<=n;j++)
+ {
+  for(i=1;i<=n;i++)
+  {
+   if(t[i][j-1]==-1)continue;
+   t[i][j]=t[t[i][j-1]][j-1];
+  }
+ }
+}
+
+
+
+ll lca(ll p,ll q)
+{
+ if(lev[p]<lev[q])swap(p,q);
+
+ ll i,j;
+
+
+ for(i=16;i>=0;i--)
+ {
+  if(lev[p]-(1<<i)>=lev[q])p=t[p][i];
+ }
+ if(p==q)return p;
+
+ for(i=16;i>=0;i--)
+ {
+  if(t[p][i]!=-1&&t[q][i]!=-1&&t[p][i]!=t[q][i])
+  {
+   p=t[p][i];
+   q=t[q][i];
+  }
+ }
+ return t[p][0];
+}
+
+
+//////segment///////////////////
+
+
+ll tree[ma*3];
+
+void update(ll n,ll b,ll e,ll x,ll val)
+{
+ if(b==e)
+ {
+  tree[n]=val;
+  return;
+ }
+ ll mid=(b+e)>>1,l=n*2,r=l+1;
+ if(x<=mid)update(l,b,mid,x,val);
+ else update(r,mid+1,e,x,val);
+ tree[n]=tree[l]+tree[r];
+}
+
+
+
+ll query(ll n,ll b,ll e,ll x,ll y)
+{
+ if(b>y||e<x)return 0;
+ if(b>=x&&e<=y)return tree[n];
+ ll mid=(b+e)>>1,l=n*2,r=l+1;
+ ll p=query(l,b,mid,x,y);
+ ll p1=query(r,mid+1,e,x,y);
+ return p+p1;
+}
+
+
+/////////heavy_light///////////////
+
+
+ll head[ma],chainno[ma],pos[ma],siz=0,chain=0;
+
+void hld(ll u,ll par,ll f)
+{
+ ll i;
+ if(f==1)
+ {
+  chain++;
+  head[chain]=u;
+ }
+ chainno[u]=chain;
+ pos[u]=++siz;
+
+ update(1,1,n,pos[u],a[u]);
+ ll mx=-1,ind=-1;
+
+ f(i,0,adj[u].sz)
+ {
+  ll p=adj[u][i];
+  if(p==par)continue;
+  if(sub[p]>mx)
+  {
+   mx=sub[p];
+   ind=p;
+  }
+ }
+
+
+ if(ind!=-1)
+ hld(ind,u,0);
+
+ for(i=0;i<adj[u].sz;i++)
+ {
+  ll p=adj[u][i];
+  if(p==par||p==ind)continue;
+  hld(p,u,1);
+
+ }
+}
+
+ll hld_query(ll u,ll v)
+{
+ ll sum=0;
+
+ while(chainno[u]!=chainno[v])
+ {
+
+  if(lev[u]<lev[v])swap(u,v);
+  ll r=head[chainno[u]];
+  sum+=query(1,1,n,pos[r],pos[u]);
+  u=t[r][0];
+
+ }
+
+ if(lev[u]<lev[v])swap(u,v);
+ sum+=query(1,1,n,pos[v],pos[u]);
+ return sum;
+}
+
+
+
+
+
+
+//////////////the_end///////////////////
+
+
+
+
+
+
+int main()
+{
+ ll tc,u,v,i,j,m,x,y,cas=0;
+
+
+ //ios_base::sync_with_stdio(0);
+ //cin.tie(0);
+ //cout.tie(0);
+
+ ent(tc);
+
+ while(tc--)
+ {
+  ent(n);
+
+  f(i,0,n)ent(a[i]);
+
+  mem(tree);
+
+  f(i,1,n)
+  {
+   ent2(u,v);
+   adj[u].pb(v);
+   adj[v].pb(u);
+  }
+
+  siz=chain=0;
+
+
+  build(n);
+
+  hld(0,-1,1);
+
+  ll q=0;
+
+  ent(q);
+  pf("Case %lld:\n",++cas);
+
+  while(q--)
+  {
+   ent(m);
+
+   if(m==0)
+   {
+    ent2(x,y);
+
+
+    ll p=lca(x,y);
+
+    ll r=hld_query(x,p);
+    ll r1=hld_query(y,p);
+
+    pf("%lld\n",r+r1-a[p]);
+    continue;
+   }
+   ent2(x,y);
+   a[x]=y;
+   update(1,1,n,pos[x],y);
+  }
+
+
+
+
+  f(i,0,ma)adj[i].clr;
+
+
+
+ }
+
+
+
+ return 0;
+
+}
