@@ -1,0 +1,68 @@
+/*
+Nahid Hossain
+Jahangirnagar University
+Roll:54
+*/
+#include<bits/stdc++.h>
+#define ll          long long int
+#define db          double
+#define pf          printf
+#define sf          scanf
+#define ff          first
+#define ss          second
+#define clr         clear()
+#define sz          size()
+#define pb          push_back
+#define mk          make_pair
+#define pi          acos(-1)
+#define inf         123456789
+#define mod         1000000007
+#define ull         unsigned long long int
+#define f(i,k,n)    for(ll i=k;i<n;i++)
+#define fr(i,n,k)   for(i=n;i>=k;i--)
+#define ent(a)      scanf("%lld",&a)
+#define ent2(a,b)   scanf("%lld%lld",&a,&b)
+#define ent3(a,b,c) scanf("%lld%lld%lld",&a,&b,&c)
+#define mem(a)      memset(a,0,sizeof(a))
+#define vec(v,s)    vector<ll>v[s]
+#define arr(a,s)    ll a[s];
+//#define check(n,pos) (n&(1<<pos))
+//#define set(n,pos)  (n|(1<<pos))
+//knight and king//
+int dr[]= {2,2,-2,-2,1,-1,1,-1};
+int dc[]= {1,-1,1,-1,2,2,-2,-2};
+int dr1[]= {0,0,1,1,1,-1,-1,-1};
+int dc1[]= {1,-1,1,0,-1,0,1,-1};
+int dr2[]= {0,0,1,-1};
+int dc2[]= {1,-1,0,0};
+////////////////////////////
+using namespace std;
+#define ma 100005
+ll a[ma],tree[ma*4];
+void update(ll n,ll b,ll e,ll x,ll val)
+{
+ if(e<x||b>x)return;
+ if(b==e&&e==x)
+ {
+  tree[n]=val;
+  return;
+ }
+ ll mid=(b+e)>>1;
+ update(n*2,b,mid,x,val);
+ update(n*2+1,mid+1,e,x,val);
+ tree[n]=max(tree[n*2],tree[n*2+1]);
+}
+ll query(ll n,ll b,ll e,ll x,ll y)
+{
+ if(e<x||b>y)return 0;
+ if(b>=x&&e<=y)
+ {
+  return tree[n];
+ }
+ ll mid=(b+e)>>1;
+ ll l=n*2;
+ ll r=l+1;
+ ll p1=query(l,b,mid,x,y);
+ ll p2=query(r,mid+1,e,x,y);
+ return max(p1,p2);
+}
