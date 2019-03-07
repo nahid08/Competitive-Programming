@@ -1,0 +1,174 @@
+/*
+Nahid Hossain
+Jahangirnagar University
+Roll:54
+*/
+#include<bits/stdc++.h>
+#define ll          long long int
+#define db          double
+#define pf          printf
+#define sf          scanf
+#define ff          first
+#define ss          second
+#define clr         clear()
+#define sz          size()
+#define pb          push_back
+#define mk          make_pair
+#define pi          acos(-1)
+#define inf         1000000000000000005
+#define mod          998244353
+
+#define q(n)        q.push(n)
+#define ull         unsigned long long int
+#define f(i,k,n)    for(ll i=k;i<n;i++)
+#define fr(i,n,k)   for(ll i=n;i>=k;i--)
+#define ent(a)      scanf("%lld",&a)
+#define ent2(a,b)   scanf("%lld%lld",&a,&b)
+#define ent3(a,b,c) scanf("%lld%lld%lld",&a,&b,&c)
+#define mem(a)      memset(a,0,sizeof(a))
+#define mem1(a)     memset(a,-1,sizeof(a))
+#define vec(v,s)    vector<ll>v[s]
+#define arr(a,s)    ll a[s]
+
+using namespace std;
+#define ma 100006
+ll dis[21][100005],mark[ma],sub[ma],t,pa[ma],lvl[ma],ans[ma];
+vector<ll>adj[ma];
+
+
+void dfs2(ll u,ll par)
+{
+ f(i,0,adj[u].sz)
+ {
+  ll p=adj[u][i];
+  if(p==par)continue;
+  ans[p]=ans[u]+1;
+  dfs2(p,u);
+ }
+}
+
+void dfs(ll u,ll par)
+{
+ t++;
+ sub[u]=1;
+ f(i,0,adj[u].sz)
+ {
+  ll p=adj[u][i];
+  if(par==p||mark[p]==1)continue;
+  dfs(p,u);
+  sub[u]+=sub[p];
+ }
+}
+
+
+
+ll fin_center(ll u,ll par)
+{
+ f(i,0,adj[u].sz)
+ {
+  ll p=adj[u][i];
+  if(p==par||mark[p]==1)continue;
+  if(sub[p]>t/2)return fin_center(p,u);
+ }
+ return u;
+}
+
+
+
+void cal(ll u,ll par,ll lev)
+{
+ f(i,0,adj[u].sz)
+ {
+  ll p=adj[u][i];
+  if(p==par||mark[p]==1)continue;
+  dis[lev][p]=dis[lev][u]+1;
+  cal(p,u,lev);
+ }
+}
+
+
+
+
+
+void centriod(ll u,ll par,ll lev)
+{
+ t=0;
+ dfs(u,par);
+ ll c=fin_center(u,par);
+ lvl[c]=lev;
+ mark[c]=1;
+ pa[c]=par;
+ dis[lev][c]=0;
+ cal(c,par,lev);
+
+ f(i,0,adj[c].sz)
+ {
+  ll p=adj[c][i];
+  if(mark[p]==1)continue;
+  centriod(p,c,lev+1);
+ }
+}
+
+
+
+
+int main()
+{
+ ll n,m,i,u,v;
+ while(cin>>n>>m)
+ {
+  for(i=1;i<n;i++)
+  {
+   ent2(u,v);
+   adj[u].pb(v);
+   adj[v].pb(u);
+  }
+  ans[1]=0;
+  dfs2(1,-1);
+
+  mem(mark);
+  centriod(1,-1,1);
+
+
+
+  while(m--)
+  {
+   ent2(v,u);
+   if(v==1)
+   {
+   ll p=u;
+   while(1)
+   {
+    ans[p]=min(ans[p],dis[lvl[p]][u]);
+    p=pa[p];
+    if(p==-1)break;
+   }
+
+   continue;
+   }
+
+   ll p=u;
+   ll min1=inf;
+   while(1)
+   {
+    //cout<<p<<endl;
+    ll r=ans[p]+dis[lvl[p]][u];
+    min1=min(r,min1);
+    p=pa[p];
+    if(p==-1)break;
+   }
+
+
+   cout<<min1<<endl;
+
+
+  }
+
+
+
+ }
+
+
+ return 0;
+
+}
