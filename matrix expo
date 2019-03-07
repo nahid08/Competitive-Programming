@@ -1,0 +1,88 @@
+/*
+Nahid Hossain
+Jahangirnagar University
+Roll:54
+*/
+#include<bits/stdc++.h>
+#define ll          long long int
+#define db          double
+#define pf          printf
+#define sf          scanf
+#define ff          first
+#define ss          second
+#define clr         clear()
+#define sz          size()
+#define pb          push_back
+#define mk          make_pair
+#define pi          acos(-1)
+#define inf         123456789
+#define mod         1000000007
+#define ull         unsigned long long int
+#define f(i,k,n)    for(i=k;i<n;i++)
+#define fr(i,n,k)   for(i=n;i>=k;i--)
+#define ent(a)      scanf("%lld",&a)
+#define ent2(a,b)   scanf("%lld%lld",&a,&b)
+#define ent3(a,b,c) scanf("%lld%lld%lld",&a,&b,&c)
+#define mem(a)      memset(a,0,sizeof(a))
+#define vec(v,s)    vector<ll>v[s]
+#define arr(a,s)    ll a[s];
+using namespace std;
+ll m[2][2],md;
+void multiply(ll a[2][2],ll b[2][2])
+{
+ ll mult[3][3],i,j,k;
+ mem(mult);
+ for(i=0;i<2;i++)
+ {
+  for(j=0;j<2;j++)
+  {
+   for(k=0;k<2;k++)
+   {
+    mult[i][j]+=(a[i][k]%md*b[k][j]%md);
+   }
+  }
+ }
+ for(i=0;i<2;i++)
+ {
+  for(j=0;j<2;j++)a[i][j]=mult[i][j]%md;
+ }
+}
+void power(ll f[2][2],ll n)
+{
+ ll m1[2][2]={{1,1},{1,0}};
+ if(n==1)return ;
+ power(f,n/2);
+ multiply(f,f);
+ if(n%2==1)multiply(f,m1);
+}
+int main()
+{
+ ll n,a,b,i,j,cas=0,tc,m1;
+ ent(tc);
+ while(tc--)
+ {
+  cin>>a>>b>>n>>m1;
+  m[0][0]=1,m[0][1]=1,m[1][0]=1,m[1][1]=0;
+  ll ans;
+  if(n<=1)
+  {
+   if(n==1)ans=b;
+   else ans=a;
+   pf("Case %lld: %lld\n",++cas,ans);
+   continue;
+  }
+  md=1;
+  for(i=1;i<=m1;i++)md*=10;
+  power(m,n-1);
+  /*for(i=0;i<2;i++)
+  {
+   for(j=0;j<2;j++)cout<<m[i][j]<<" ";
+   cout<<endl;
+  }*/
+  ans=(m[0][0]%md*b%md+m[0][1]%md*a%md)%md;
+  pf("Case %lld: %lld\n",++cas,ans);
+ }
+ return 0;
+ 
+}
+ 
