@@ -1,0 +1,222 @@
+/*
+Nahid Hossain
+Jahangirnagar University
+Roll:54
+*/
+#include<bits/stdc++.h>
+#define ll          long long int
+#define db          double
+#define pf          printf
+#define sf          scanf
+#define ff          first
+#define ss          second
+#define clr         clear()
+#define sz          size()
+#define pb          push_back
+#define mk          make_pair
+#define pi          acos(-1)
+#define inf         9999999999999999
+#define mod         1000000007
+#define ull         unsigned long long int
+#define f(i,k,n)    for(ll i=k;i<n;i++)
+#define fr(i,n,k)   for(i=n;i>=k;i--)
+#define ent(a)      scanf("%lld",&a)
+#define ent2(a,b)   scanf("%lld%lld",&a,&b)
+#define ent3(a,b,c) scanf("%lld%lld%lld",&a,&b,&c)
+#define mem(a)      memset(a,0,sizeof(a))
+#define vec(v,s)    vector<ll>v[s]
+#define arr(a,s)    ll a[s];
+
+using namespace std;
+
+#define ma 40005
+
+
+ll st[ma],en[ma],lev[ma],a[ma],t[ma][17],n,t1;
+vector<ll>adj[ma];
+ll b[ma*3];
+
+
+void dfs(ll u,ll par)
+{
+
+ st[u]=++t1;
+ b[t1]=u;
+
+ f(i,0,adj[u].sz)
+ {
+  ll p=adj[u][i];
+  if(p==par)continue;
+  lev[p]=lev[u]+1;
+  t[p][0]=u;
+  dfs(p,u);
+ }
+ en[u]=++t1;
+ b[t1]=u;
+
+}
+
+
+
+
+void build(ll n)
+{
+ memset(t,-1,sizeof(t));
+ t1=0;
+
+
+ dfs(1,0);
+
+
+ ll i,j;
+
+ for(j=1;(1<<j)<=n;j++)
+ {
+  for(i=1;i<=n;i++)
+  {
+   if(t[i][j-1]==-1)continue;
+   t[i][j]=t[t[i][j-1]][j-1];
+  }
+ }
+}
+
+
+
+ll lca(ll p,ll q)
+{
+ if(lev[p]<lev[q])swap(p,q);
+
+ ll i,j;
+
+
+ for(i=16;i>=0;i--)
+ {
+  if(lev[p]-(1<<i)>=lev[q])p=t[p][i];
+ }
+ if(p==q)return p;
+
+ for(i=16;i>=0;i--)
+ {
+  if(t[p][i]!=-1&&t[q][i]!=-1&&t[p][i]!=t[q][i])
+  {
+   p=t[p][i];
+   q=t[q][i];
+  }
+ }
+ return t[p][0];
+}
+
+
+
+struct data
+{
+ ll l,r,lc,seg,id;
+
+};
+
+
+
+bool cmp(data a,data b)
+{
+ if(a.seg==b.seg)return a.r<b.r;
+ return a.seg<b.seg;
+}
+
+
+data q[ma*3];
+
+
+
+
+void compress()
+{
+ map<ll,ll>mp;
+ vector<ll>v;
+ ll cn=0;
+ f(i,1,n+1)
+ v.pb(a[i]);
+ sort(v.begin(),v.end());
+ f(i,0,v.sz)if(mp[v[i]]==0)mp[v[i]]=++cn;
+ f(i,1,n+1)a[i]=mp[a[i]];
+}
+
+ll vis[ma*3],mark[ma*3],cn;
+
+void add(ll x)
+{
+ if(vis[x]==0)
+ {
+  mark[a[x]]++;
+  if(mark[a[x]]==1)cn++;
+ }
+ else if(vis[x]==1)
+ {
+  mark[a[x]]--;
+  if(mark[a[x]]==0)cn--;
+ }
+
+ vis[x]^=1;
+}
+
+
+
+
+
+
+
+
+
+
+int main()
+{
+ ll m,u,v,i;
+
+ ent2(n,m);
+
+
+ f(i,1,n+1)ent(a[i]);
+
+
+ f(i,1,n)
+ {
+  ent2(u,v);
+  adj[u].pb(v);
+  adj[v].pb(u);
+ }
+
+ compress();
+
+
+
+
+ build(n);
+
+ ll n1=sqrt(t1)+1;
+
+
+
+ for(i=1;i<=m;i++)
+ {
+  ent2(u,v);
+  if(lev[u]>lev[v])swap(u,v);
+  ll p=lca(u,v);
+
+  if(p==u)
+  {
+
+   q[i].l=st[u];
+   q[i].r=st[v];
+   q[i].seg=st[u]/n1;
+   q[i].id=i;
+   q[i].lc=0;
+   continue;
+  }
+  q[i].l=en[u];
+  q[i].r=st[v];
+  q[i].seg=en[u]/n1;
+  q[i].lc=p;
+  q[i].id=i;
+
+ }
+
+}
