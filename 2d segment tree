@@ -1,0 +1,182 @@
+                                                       //Only Allah can help me//
+/*
+Nahid Hossain
+Jahangirnagar University
+Roll:54
+
+*/
+#include<bits/stdc++.h>
+#define ll          long long int
+#define db          double
+#define pf          printf
+#define sf          scanf
+#define ff          first
+#define ss          second
+#define clr         clear()
+#define sz          size()
+#define pb          push_back
+#define mk          make_pair
+#define pi          acos(-1)
+#define rev(v)      reverse(v.begin(),v.end())
+#define sor(v)      sort(v.begin(),v.end())
+#define inf         999999999999999999
+#define mod         5000000
+#define eq          =
+#define ull         unsigned long long int
+#define f(i,k,n)    for(ll i=k;i<n;i++)
+#define fr(i,n,k)   for(i=n;i>=k;i--)
+#define ent(a)      scanf("%lld",&a)
+#define ent2(a,b)   scanf("%lld%lld",&a,&b)
+#define ent3(a,b,c) scanf("%lld%lld%lld",&a,&b,&c)
+#define mem(a)      memset(a,0,sizeof(a))
+#define vec(v,s)    vector<ll>v[s]
+#define arr(a,s)    ll a[s];
+//#define check(n,pos) (n&(1<<pos))
+//#define set(n,pos)  (n|(1<<pos))
+//knight and king//
+int dr[]= {2,2,-2,-2,1,-1,1,-1};
+int dc[]= {1,-1,1,-1,2,2,-2,-2};
+int dr1[]= {0,0,1,1,1,-1,-1,-1};
+int dc1[]= {1,-1,1,0,-1,0,1,-1};
+int dr2[]= {0,0,1,-1};
+int dc2[]= {1,-1,0,0};
+////////////////////////////
+using namespace std;
+#define ma 502
+ll tree[ma*ma*4],tree1[ma*4*ma];
+
+bool valid(ll qx1,ll qx2,ll qy1,ll qy2,ll nx1,ll nx2,ll ny1,ll ny2)
+{
+ if(nx1>qx2||nx1>nx2)return false;
+ if(nx2<qx1||qy1>qy2)return false;
+ if(ny1>qy2)return false;
+ if(ny2<qy1)return false;
+ return true;
+}
+void update(ll qx1,ll qy1,ll nx1,ll nx2,ll ny1,ll ny2,ll node,ll val)
+{
+ bool f=valid(qx1,qx1,qy1,qy1,nx1,nx2,ny1,ny2);
+ if(f==false)return;
+ if(nx1>=qx1&&nx2<=qx1&&ny1>=qy1&&ny2<=qy1)
+ {
+  tree[node]=val;
+  return;
+ }
+
+ ll p=(nx1+nx2)/2;
+ ll p1=(ny1+ny2)/2;
+ update(qx1,qy1,nx1,p,ny1,p1,node*4+1,val);
+ update(qx1,qy1,nx1,p,p1+1,ny2,node*4+2,val);
+ update(qx1,qy1,p+1,nx2,ny1,p1,node*4+3,val);
+ update(qx1,qy1,p+1,nx2,p1+1,ny2,node*4+4,val);
+ ll r1=tree[node*4+1];
+ ll r2=tree[node*4+2];
+ ll r3=tree[node*4+3];
+ ll r4=tree[node*4+4];
+ //cout<<r1<<" "<<r2<<" "<<r3<<" "<<r4<<endl;
+ tree[node]=max(r1,max(r2,max(r3,r4)));
+ //cout<<tree[node]<<endl;
+ return;
+}
+
+ll query(ll qx1,ll qx2,ll qy1,ll qy2,ll nx1,ll nx2,ll ny1,ll ny2,ll node)
+{
+ if(valid(qx1,qx2,qy1,qy2,nx1,nx2,ny1,ny2)==false) return 0;
+ if(nx1>=qx1&&nx2<=qx2&&ny1>=qy1&&ny2<=qy2)
+ {
+  return tree[node];
+ }
+ ll p=(nx1+nx2)>>1;
+ ll p1=(ny1+ny2)>>1;
+ ll r1=query(qx1,qx2,qy1,qy2,nx1,p,ny1,p1,node*4+1);
+ ll r2=query(qx1,qx2,qy1,qy2,nx1,p,p1+1,ny2,node*4+2);
+ ll r3=query(qx1,qx2,qy1,qy2,p+1,nx2,ny1,p1,node*4+3);
+ ll r4=query(qx1,qx2,qy1,qy2,p+1,nx2,p1+1,ny2,node*4+4);
+ return max(r1,max(r2,max(r3,r4)));
+
+}
+
+
+void update1(ll qx1,ll qy1,ll nx1,ll nx2,ll ny1,ll ny2,ll node,ll val)
+{
+ bool f=valid(qx1,qx1,qy1,qy1,nx1,nx2,ny1,ny2);
+ if(f==false)return;
+ if(nx1>=qx1&&nx2<=qx1&&ny1>=qy1&&ny2<=qy1)
+ {
+  tree1[node]=val;
+  return;
+ }
+
+ ll p=(nx1+nx2)/2;
+ ll p1=(ny1+ny2)/2;
+ update1(qx1,qy1,nx1,p,ny1,p1,node*4+1,val);
+ update1(qx1,qy1,nx1,p,p1+1,ny2,node*4+2,val);
+ update1(qx1,qy1,p+1,nx2,ny1,p1,node*4+3,val);
+ update1(qx1,qy1,p+1,nx2,p1+1,ny2,node*4+4,val);
+ ll r1=tree1[node*4+1];
+ ll r2=tree1[node*4+2];
+ ll r3=tree1[node*4+3];
+ ll r4=tree1[node*4+4];
+ //cout<<r1<<" "<<r2<<" "<<r3<<" "<<r4<<endl;
+ tree1[node]=min(r1,min(r2,min(r3,r4)));
+ //cout<<tree[node]<<endl;
+ return;
+}
+
+ll query1(ll qx1,ll qx2,ll qy1,ll qy2,ll nx1,ll nx2,ll ny1,ll ny2,ll node)
+{
+ if(valid(qx1,qx2,qy1,qy2,nx1,nx2,ny1,ny2)==false) return 999999999999;
+ if(nx1>=qx1&&nx2<=qx2&&ny1>=qy1&&ny2<=qy2)
+ {
+  return tree1[node];
+ }
+ ll p=(nx1+nx2)>>1;
+ ll p1=(ny1+ny2)>>1;
+ ll r1=query1(qx1,qx2,qy1,qy2,nx1,p,ny1,p1,node*4+1);
+ ll r2=query1(qx1,qx2,qy1,qy2,nx1,p,p1+1,ny2,node*4+2);
+ ll r3=query1(qx1,qx2,qy1,qy2,p+1,nx2,ny1,p1,node*4+3);
+ ll r4=query1(qx1,qx2,qy1,qy2,p+1,nx2,p1+1,ny2,node*4+4);
+ return min(r1,min(r2,min(r3,r4)));
+
+}
+int main()
+{
+ ll n;
+ ent(n);
+ ll a[n+5][n+5];
+ mem(tree);
+ f(i,0,ma*ma*4)tree1[i]=9999999999999;
+ f(i,1,n+1)
+ {
+  f(j,1,n+1)
+  {
+   ent(a[i][j]);
+   update(i,j,1,n,1,n,1,a[i][j]);
+   update1(i,j,1,n,1,n,1,a[i][j]);
+  }
+ }
+ ll q;
+ cin>>q;
+ while(q--)
+ {
+  char c;
+  ll x1,x2,y1,y2;
+  cin>>c;
+  if(c=='c')
+  {
+   ll v;
+   cin>>x1>>y1>>v;
+   update(x1,y1,1,n,1,n,1,v);
+   update1(x1,y1,1,n,1,n,1,v);
+   continue;
+
+  }
+  cin>>x1>>y1>>x2>>y2;
+  cout<<query(x1,x2,y1,y2,1,n,1,n,1)<<" ";
+  cout<<query1(x1,x2,y1,y2,1,n,1,n,1)<<endl;
+
+ }
+
+
+ return 0;
+}
