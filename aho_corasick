@@ -1,0 +1,221 @@
+/*
+Nahid Hossain
+Jahangirnagar University
+Roll:54
+*/
+#include<bits/stdc++.h>
+#define ll          long long int
+#define db          double
+#define pf          printf
+#define sf          scanf
+#define ff          first
+#define ss          second
+#define clr         clear()
+#define sz          size()
+#define pb          push_back
+#define mk          make_pair
+#define pi          acos(-1)
+#define inf         9999999999999999
+#define mod         1000000007
+#define ull         unsigned long long int
+#define f(i,k,n)    for(ll i=k;i<n;i++)
+#define fr(i,n,k)   for(i=n;i>=k;i--)
+#define ent(a)      scanf("%lld",&a)
+#define ent2(a,b)   scanf("%lld%lld",&a,&b)
+#define ent3(a,b,c) scanf("%lld%lld%lld",&a,&b,&c)
+#define mem(a)      memset(a,0,sizeof(a))
+#define vec(v,s)    vector<ll>v[s]
+#define arr(a,s)    ll a[s];
+//#define check(n,pos) (n&(1<<pos))
+//#define set(n,pos)  (n|(1<<pos))
+//knight and king//
+int dr[]={2, 2, -2, -2, 1, -1, 1, -1};
+int dc[]={1,-1,  1, -1, 2,  2,-2, -2};
+int dr1[]={0, 0, 0, 1, 1, 1, -1, -1, -1};
+int dc1[]={-1,0, 1,-1, 0, 1, -1, 0,   1};
+int dr2[]={0, 0, 1, -1};
+int dc2[]={1,-1, 0,  0};
+////////////////////////////
+using namespace std;
+#define ma 1000005
+
+const ll maxs=505*505;
+const ll maxc=26;
+
+ll f[maxs],g[maxs][maxc];
+bitset<500>out[maxs];
+
+vector<string>v;
+
+
+ll build( )
+{
+
+ ll i,j;
+
+
+ mem(out);
+ memset(f,-1,sizeof(f));
+ memset(g,-1,sizeof(g));
+
+
+ ll state=1;
+
+ for(i=0;i<v.sz;i++)
+ {
+  string t=v[i];
+
+  ll currstate=0;
+  ll k=1;
+
+
+  for(j=0;j<t.sz;j++)
+  {
+   ll c=t[j]-'a';
+   if(g[currstate][c]==-1)g[currstate][c]=state++;
+   currstate=g[currstate][c];
+  }
+
+  out[currstate].set(i);
+ }
+
+
+
+ for(i=0;i<maxc;i++)
+ {
+  if(g[0][i]==-1)g[0][i]=0;
+ }
+
+
+ queue<ll>q;
+
+ for(i=0;i<26;i++)
+ {
+  if(g[0][i]!=-1&&g[0][i]!=0)
+  {
+   f[g[0][i]]=0;
+   q.push(g[0][i]);
+  }
+ }
+
+
+
+ while(q.sz>0)
+ {
+  ll state=q.front();
+  q.pop();
+  for(i=0;i<26;i++)
+  {
+   if(g[state][i]==-1)continue;
+   ll p=f[state];
+
+
+   while(g[p][i]==-1)
+   {
+    p=f[p];
+   }
+
+   p=g[p][i];
+
+   f[g[state][i]]=p;
+
+   out[g[state][i]]|=out[p];
+
+   q.push(g[state][i]);
+  }
+ }
+
+
+
+ return state;
+
+
+
+
+
+
+
+}
+
+
+
+
+ll findstate(ll x,char c)
+{
+ ll p=x;
+ ll r=c-'a';
+ while(g[p][r]==-1)p=f[p];
+ return g[p][r];
+}
+
+
+
+
+int main()
+{
+ ll n;
+
+ string t;
+
+ ll i,j,tc,cas=0;
+
+ ent(tc);
+
+
+ while(tc--)
+ {
+  ent(n);
+
+  cin>>t;
+
+
+  f(i,1,n+1)
+  {
+   string t1;
+   cin>>t1;
+   v.pb(t1);
+  }
+
+
+  build();
+
+
+  ll ans[n+5];
+  mem(ans);
+  ll k=1;
+
+  ll p=0;
+  for(i=0;i<t.sz;i++)
+  {
+   p=findstate(p,t[i]);
+
+   if(out[p]==0)continue;
+
+   for(j=0;j<v.sz;j++)
+   {
+    if(out[p].test(j))
+    {
+     ans[j]++;
+    }
+   }
+
+
+  }
+  pf("Case %lld:\n",++cas);
+
+
+  f(i,0,n)pf("%lld\n",ans[i]);
+
+  v.clr;
+
+
+
+
+ }
+
+
+ return 0;
+}
+
+
+
