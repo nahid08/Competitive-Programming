@@ -1,0 +1,139 @@
+                                                       //Only Allah can help me//
+/*
+Nahid Hossain
+Jahangirnagar University
+Roll:54
+
+*/
+#include<bits/stdc++.h>
+#define ll          long long int
+#define db          double
+#define pf          printf
+#define sf          scanf
+#define ff          first
+#define ss          second
+#define clr         clear()
+#define sz          size()
+#define pb          push_back
+#define mk          make_pair
+#define pi          acos(-1)
+#define rev(v)      reverse(v.begin(),v.end())
+#define sor(v)      sort(v.begin(),v.end())
+#define inf         9999999999999
+#define mod         5000000
+#define eq          =
+#define ull         unsigned long long int
+#define f(i,k,n)    for(ll i=k;i<n;i++)
+#define fr(i,n,k)   for(i=n;i>=k;i--)
+#define ent(a)      scanf("%lld",&a)
+#define ent2(a,b)   scanf("%lld%lld",&a,&b)
+#define ent3(a,b,c) scanf("%lld%lld%lld",&a,&b,&c)
+#define mem(a)      memset(a,0,sizeof(a))
+#define vec(v,s)    vector<ll>v[s]
+#define arr(a,s)    ll a[s];
+//#define check(n,pos) (n&(1<<pos))
+//#define set(n,pos)  (n|(1<<pos))
+//knight and king//
+int dr[]= {2,2,-2,-2,1,-1,1,-1};
+int dc[]= {1,-1,1,-1,2,2,-2,-2};
+int dr1[]= {0,0,1,1,1,-1,-1,-1};
+int dc1[]= {1,-1,1,0,-1,0,1,-1};
+int dr2[]= {0,0,1,-1};
+int dc2[]= {1,-1,0,0};
+////////////////////////////
+using namespace std;
+#define ma 100010
+ll dis[ma],pt[ma],n,s,t;
+struct edge
+{
+ ll a,b,f,c;
+};
+vector<edge>e;
+vector<ll>adj[ma];
+void add_edge(ll a,ll b,ll c)
+{
+ edge e1;
+ e1={a,b,0,c};
+ adj[a].pb(e.sz);
+ e.pb(e1);
+ e1={b,a,0,c};
+ adj[b].pb(e.sz);
+ e.pb(e1);
+}
+
+bool bfs( )
+{
+ f(i,1,n+1)dis[i]=inf;
+ queue<ll>q;
+ q.push(s);
+ dis[s]=0;
+ while(q.sz>0)
+ {
+  ll u=q.front();q.pop();
+  f(i,0,adj[u].sz)
+  {
+   ll id=adj[u][i];
+   ll v=e[id].b;
+   if(dis[v]==inf&&e[id].f<e[id].c)
+   {
+    dis[v]=dis[u]+1;
+    q.push(v);
+   }
+  }
+ }
+ return dis[t]!=inf;
+}
+
+
+
+ll dfs(ll u,ll flow)
+{
+ if(!flow)return 0;
+ if(u==t)return flow;
+ for(;pt[u]<adj[u].sz;pt[u]++)
+ {
+  ll id=adj[u][pt[u]];
+  ll v=e[id].b;
+  if(dis[v]!=dis[u]+1)continue;
+  ll pushed=dfs(v,min(flow,e[id].c-e[id].f));
+  if(pushed)
+  {
+   e[id].f+=pushed;
+   e[id^1].f-=pushed;
+   return pushed;
+  }
+ }
+ return 0;
+}
+
+
+
+
+ll dinic()
+{
+ ll flow=0;
+ while(bfs())
+ {
+  mem(pt);
+  while(ll pushed=dfs(s,inf))flow+=pushed;
+ }
+ return flow;
+}
+
+
+int main()
+{
+ ll m;
+ cin>>n>>m;
+ f(i,1,m+1)
+ {
+  ll u,v,c;
+  cin>>u>>v>>c;
+  add_edge(u,v,c);
+ }
+ s=1;
+ t=n;
+ ll ans=dinic();
+ cout<<ans<<endl;
+}
+
