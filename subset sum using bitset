@@ -1,0 +1,40 @@
+bitset<ma>b;
+
+ll a[ma];
+
+
+int main()
+{
+ ll n,q,i,j,x,l,r;
+
+ //ios_base::sync_with_stdio(false);
+ //cin.tie(0);
+ //cout.tie(0);
+ ent2(n,q);
+
+ b[0]=1;
+
+ f(i,1,n+1)
+ {
+  ent(x);
+
+  b|=(b<<x);
+ }
+
+
+ for(i=1;i<ma;i++)
+ {
+  a[i]=a[i-1]+b[i];
+ }
+
+
+ while(q--)
+ {
+  ent2(l,r);
+  pf("%lld\n",a[r]-a[l-1]);
+ }
+
+
+
+ return 0;
+}
