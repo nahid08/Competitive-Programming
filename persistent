@@ -1,0 +1,112 @@
+struct persistent{
+ll l,r,s;
+
+persistent()
+{
+ l=0,r=0,s=0;
+}
+
+}tree[ma];
+
+
+
+
+void update(ll n,ll b,ll e,ll pn,ll val,ll x)
+{
+
+ if(b==e)
+ {
+  tree[n].s=tree[pn].s+val;
+  return ;
+ }
+
+ ll mid=(b+e)>>1;
+ if(x<=mid)
+ {
+  if(tree[n].l==0)
+  tree[n].l=++nw;
+  tree[n].r=tree[pn].r;
+
+  update(tree[n].l,b,mid,tree[pn].l,val,x);
+
+ }
+ else
+ {
+  if(tree[n].r==0)
+  tree[n].r=++nw;
+  tree[n].l=tree[pn].l;
+  update(tree[n].r,mid+1,e,tree[pn].r,val,x);
+ }
+
+ tree[n].s=tree[tree[n].l].s+tree[tree[n].r].s;
+}
+
+
+
+
+ll query(ll n,ll b,ll e,ll x,ll y)
+{
+ if(b>y||e<x)return 0;
+ if(b>=x&&e<=y)
+ {
+  return tree[n].s;
+ }
+ ll mid=(b+e)>>1;
+ ll p=query(tree[n].l,b,mid,x,y);
+ ll p1=query(tree[n].r,mid+1,e,x,y);
+ return p+p1;
+
+}
+
+
+ll a[30006];
+
+
+
+int main()
+{
+ ll n,m,i,j;
+ //ios_base::sync_with_stdio(false);
+ //cin.tie(0);
+ //cout.tie(0);
+
+ent(n);
+
+f(i,1,n+1)ent(a[i]);
+
+
+
+
+nw=0;
+for(i=1;i<=n;i++)
+{
+ rt[i]=++nw;
+ ll p=a[i];
+ //update(rt[i],1,n,rt[i-1],1,i);
+ if(mark[p]!=0)
+ {
+  //cout<<"Yes"<<endl;
+  update(rt[i],1,n,rt[i-1],-1,mark[p]);
+  update(rt[i],1,n,rt[i],1,i);
+ }
+ else update(rt[i],1,n,rt[i-1],1,i);
+
+ //cout<<query(rt[i],1,n,1,2)<<endl;
+
+ mark[p]=i;
+}
+
+ent(m);
+
+while(m--)
+{
+ ll l,r;
+ ent2(l,r);
+ ll ans=query(rt[r],1,n,l,r);
+ pf("%lld\n",ans);
+}
+
+
+
+
+}
