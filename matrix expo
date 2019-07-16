@@ -15,10 +15,10 @@ Roll:54
 #define pb          push_back
 #define mk          make_pair
 #define pi          acos(-1)
-#define inf         123456789
-#define mod         1000000007
+#define inf         9999999999999999
+#define mod         10
 #define ull         unsigned long long int
-#define f(i,k,n)    for(i=k;i<n;i++)
+#define f(i,k,n)    for(ll i=k;i<n;i++)
 #define fr(i,n,k)   for(i=n;i>=k;i--)
 #define ent(a)      scanf("%lld",&a)
 #define ent2(a,b)   scanf("%lld%lld",&a,&b)
@@ -26,63 +26,110 @@ Roll:54
 #define mem(a)      memset(a,0,sizeof(a))
 #define vec(v,s)    vector<ll>v[s]
 #define arr(a,s)    ll a[s];
+//#define check(n,pos) (n&(1<<pos))
+//#define set(n,pos)  (n|(1<<pos))
+//knight and king//
+int dr[]={2, 2, -2, -2, 1, -1, 1, -1};
+int dc[]={1,-1,  1, -1, 2,  2,-2, -2};
+int dr1[]={0, 0, 0, 1, 1, 1, -1, -1, -1};
+int dc1[]={-1,0, 1,-1, 0, 1, -1, 0,   1};
+int dr2[]={0, 0, 1, -1};
+int dc2[]={1,-1, 0,  0};
+////////////////////////////
 using namespace std;
-ll m[2][2],md;
-void multiply(ll a[2][2],ll b[2][2])
+
+#define ma 35
+
+
+ll n;
+
+
+struct data
 {
- ll mult[3][3],i,j,k;
- mem(mult);
- for(i=0;i<2;i++)
+ ll a[ma][ma];
+
+ void clea()
  {
-  for(j=0;j<2;j++)
+  for(ll i=0;i<n;i++)for(ll j=0;j<n;j++)a[i][j]=0;
+ }
+
+}a,b,c;
+
+
+data multilply(data a,data b)
+{
+ ll i,j,k;
+ data c;
+ c.clea();
+
+ for(i=0;i<n;i++)
+ {
+  for(j=0;j<n;j++)
   {
-   for(k=0;k<2;k++)
+   for(k=0;k<n;k++)
    {
-    mult[i][j]+=(a[i][k]%md*b[k][j]%md);
+    c.a[i][j]+=(a.a[i][k]*b.a[k][j])%mod;
+    c.a[i][j]%=mod;
    }
   }
  }
- for(i=0;i<2;i++)
- {
-  for(j=0;j<2;j++)a[i][j]=mult[i][j]%md;
- }
+
+
+
+ return c;
 }
-void power(ll f[2][2],ll n)
+
+
+data add(data a,data b)
 {
- ll m1[2][2]={{1,1},{1,0}};
- if(n==1)return ;
- power(f,n/2);
- multiply(f,f);
- if(n%2==1)multiply(f,m1);
+ ll i,j,k;
+ data c;
+ for(i=0;i<n;i++)for(j=0;j<n;j++)c.a[i][j]=(a.a[i][j]+b.a[i][j])%mod;
+ return c;
 }
+
+
+data pow(data m,ll p)
+{
+ if(p==1)return m;
+ data r=pow(m,p/2);
+ r=multilply(r,r);
+ if(p%2==1)r=multilply(r,m);
+ return r;
+}
+
+
+
+
+
+
+
 int main()
 {
- ll n,a,b,i,j,cas=0,tc,m1;
- ent(tc);
+
+ ll tc,k,i,j,cas=0;
+
+
+ cin>>tc;
+
+
  while(tc--)
  {
-  cin>>a>>b>>n>>m1;
-  m[0][0]=1,m[0][1]=1,m[1][0]=1,m[1][1]=0;
-  ll ans;
-  if(n<=1)
-  {
-   if(n==1)ans=b;
-   else ans=a;
-   pf("Case %lld: %lld\n",++cas,ans);
-   continue;
-  }
-  md=1;
-  for(i=1;i<=m1;i++)md*=10;
-  power(m,n-1);
-  /*for(i=0;i<2;i++)
-  {
-   for(j=0;j<2;j++)cout<<m[i][j]<<" ";
-   cout<<endl;
-  }*/
-  ans=(m[0][0]%md*b%md+m[0][1]%md*a%md)%md;
-  pf("Case %lld: %lld\n",++cas,ans);
+  cin>>n>>k;
+
+  for(i=0;i<n;i++)for(j=0;j<n;j++)cin>>a.a[i][j];
+  b.clea();
+
+  for(i=0;i<n;i++)b.a[i][i]=1;
+
+
+
+
+
+
  }
- return 0;
- 
+
+
+
+
 }
- 
