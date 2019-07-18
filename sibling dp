@@ -1,0 +1,149 @@
+/*
+Nahid Hossain
+Jahangirnagar University
+Roll:54
+*/
+#include<bits/stdc++.h>
+#define ll          long long int
+#define db          double
+#define pf          printf
+#define sf          scanf
+#define ff          first
+#define ss          second
+#define clr         clear()
+#define sz          size()
+#define pb          push_back
+#define mk          make_pair
+#define pi          acos(-1)
+#define inf         9999999999999999
+#define mod         1000000007
+#define ull         unsigned long long int
+#define f(i,k,n)    for(i=k;i<n;i++)
+#define fr(i,n,k)   for(i=n;i>=k;i--)
+#define ent(a)      scanf("%lld",&a)
+#define ent2(a,b)   scanf("%lld%lld",&a,&b)
+#define ent3(a,b,c) scanf("%lld%lld%lld",&a,&b,&c)
+#define mem(a)      memset(a,0,sizeof(a))
+#define vec(v,s)    vector<ll>v[s]
+#define arr(a,s)    ll a[s];
+//#define check(n,pos) (n&(1<<pos))
+//#define set(n,pos)  (n|(1<<pos))
+//knight and king//
+int dr[]={2,2,-2,-2,1,-1,1,-1};
+int dc[]={1,-1,1,-1,2,2,-2,-2};
+int dr1[]={0,0,1,1,1,-1,-1,-1};
+int dc1[]={1,-1,1,0,-1,0,1,-1};
+int dr2[]={0,0,1,-1};
+int dc2[]={1,-1,0,0};
+////////////////////////////
+using namespace std;
+#define ma 402
+ 
+ll cld[ma],sib[ma],dp[ma][ma],k,pa[ma],path[ma][ma];
+vector<ll>adj[ma],ans;
+ 
+ 
+void dfs(ll u,ll par)
+{
+ 
+    ll x=0;
+    ll i;
+ 
+    f(i,0,adj[u].sz)
+    {
+        ll p=adj[u][i];
+        if(p==par)continue;
+        pa[p]=u;
+        if(sib[x]==0)sib[x]=p;
+        if(cld[u]==0)cld[u]=p;
+        dfs(p,u);
+        x=p;
+    }
+}
+ 
+ll cal(ll u,ll k)
+{
+ if(u==0)
+ {
+     if(k>0)return inf;
+     return 0;
+ }
+ ll i;
+ ll &r=dp[u][k];
+ if(r!=-1)return r;
+ r=1+cal(sib[u],k);
+ 
+ for(i=0;i<k;i++)
+ {
+     r=min(r,cal(cld[u],i)+cal(sib[u],k-1-i));
+ }
+ return r;
+}
+ 
+ 
+void pat(ll u,ll k,ll rem)
+{
+    ll i;
+    if(rem==0)return;
+    if(dp[u][k]==1+cal(sib[u],k))
+    {
+        ll p=pa[u];
+        ans.pb(path[u][p]);
+        pat(sib[u],k,rem-1);
+        return;
+    }
+    for(i=0;i<k;i++)
+    {
+        ll p=cal(cld[u],i)+cal(sib[u],k-i-1);
+        if(p==dp[u][k])
+        {
+            pat(cld[u],i,rem);
+            pat(sib[u],k-i-1,rem);
+            return;
+        }
+    }
+}
+ 
+ 
+int main()
+{
+    ll n,u,v,i;
+ 
+    while(cin>>n>>k)
+    {
+        f(i,1,n)
+        {
+            cin>>u>>v;
+            adj[u].pb(v);
+            adj[v].pb(u);
+            path[u][v]=path[v][u]=i;
+        }
+ 
+        dfs(1,-1);
+        memset(dp,-1,sizeof(dp));
+ 
+        ll min1=inf;
+        ll node=-1;
+ 
+        for(i=1;i<=n;i++)
+        {
+            ll r=cal(cld[i],k-1)+(i!=1);
+            if(min1>r)node=i;
+            min1=min(min1,r);
+        }
+        ll p=pa[node];
+        if(p>0)
+        {
+            ans.pb(path[p][node]);
+        }
+ 
+        pat(cld[node],k-1,min1);
+        cout<<min1<<endl;
+ 
+        f(i,0,ans.sz)cout<<ans[i]<<" ";
+        cout<<endl;
+ 
+    }
+    return 0;
+ 
+}
