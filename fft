@@ -1,0 +1,165 @@
+///Allah gave me the brain.Allah will help me///
+/*
+Nahid Hossain
+Jahangirnagar University
+Roll:54
+*/
+#include<bits/stdc++.h>
+#define ll          long long int
+#define db          double
+#define pf          printf
+#define sf          scanf
+#define ff          first
+#define ss          second
+#define clr         clear()
+#define sz          size()
+#define pb          push_back
+#define mk          make_pair
+#define pi          acos(-1)
+#define inf         1e14
+#define mod         1000000007
+#define ull         unsigned long long int
+#define f(i,k,n)    for(ll i=k;i<n;i++)
+#define fr(i,n,k)   for(i=n;i>=k;i--)
+#define ent(a)      scanf("%lld",&a)
+#define ent2(a,b)   scanf("%lld%lld",&a,&b)
+#define ent3(a,b,c) scanf("%lld%lld%lld",&a,&b,&c)
+#define mem(a)      memset(a,0,sizeof(a))
+#define vec(v,s)    vector<ll>v[s]
+#define arr(a,s)    ll a[s];
+//#define check(n,pos) (n&(1<<pos))
+//#define set(n,pos)  (n|(1<<pos))
+//knight and king//
+int dr[]= {2, 2, -2, -2, 1, -1, 1, -1};
+int dc[]= {1,-1,  1, -1, 2,  2,-2, -2};
+int dr1[]= {0, 0, 1, 1, 1, -1, -1, -1};
+int dc1[]= {-1, 1,-1, 0, 1, -1, 0,   1};
+int dr2[]= {0, 0, 1, -1};
+int dc2[]= {1,-1, 0,  0};
+////////////////////////////
+using namespace std;
+
+
+#define ma 200005
+
+
+/////////////fft///////////////////////////
+
+
+void fft(vector<complex<double> >&a,bool invert)
+{
+ ll n=a.size();
+
+ for(ll i=1,j=0;i<n;i++)
+ {
+  ll bit=(n>>1);
+
+  for(;j&bit;bit>>=1)j^=bit;
+  j^=bit;
+  if(i<j)swap(a[i],a[j]);
+ }
+
+
+ for(ll len=2;len<=n;len<<=1)
+ {
+  double ang=2*pi/len*(invert ? -1:1);
+  complex<double> wlen(cos(ang),sin(ang));
+  for(int i=0;i<n;i+=len)
+  {
+   complex<double>w(1);
+   for(int j=0;j<len/2;j++)
+   {
+   complex<double> u=a[i+j],v=a[i+j+len/2]*w;
+   a[i+j]=u+v;
+   a[i+j+len/2]=u-v;
+   w*=wlen;
+
+   }
+  }
+ }
+
+ if(invert)
+ {
+  for(auto &x : a)x/=n;
+ }
+
+
+
+}
+
+
+vector<ll>multiply(vector<ll>&a,vector<ll>&b)
+{
+ ll siz=a.sz+b.sz;
+ ll n=1;
+ while(n<siz)n<<=1;
+ vector<complex<double> >fa(a.begin(),a.end());
+ vector<complex<double> >fb(b.begin(),b.end());
+ fa.resize(n);fb.resize(n);
+ fft(fa,false);fft(fb,false);
+ for(ll i=0;i<n;i++)fa[i]*=fb[i];
+ fft(fa,true);
+ vector<ll>ret(n);
+ for(ll i=0;i<n;i++)ret[i]=round(fa[i].real());
+ return ret;
+}
+
+
+//////////fft//////////////////////////////////
+
+
+
+int main()
+{
+ ll tc,i,j;
+ string t,t1;
+ cin>>tc;
+
+ while(tc--)
+ {
+  cin>>t>>t1;
+
+  vector<ll>v,v1,v2;
+
+  for(i=t.sz-1;i>=0;i--)v1.pb(t[i]-'0');
+  for(i=t1.sz-1;i>=0;i--)v2.pb(t1[i]-'0');
+
+  v=multiply(v1,v2);
+
+  string t2;
+
+  ll carry=0;
+  bool f=0;
+
+  ll pos=-1;
+  for(i=v.sz-1;i>=0;i--)
+  {
+   if(v[i]!=0)
+   {
+    pos=i;break;
+   }
+  }
+
+  if(pos==-1)
+  {
+   cout<<"0"<<endl;
+   continue;
+  }
+
+  for(i=0;i<=pos;i++)
+  {
+
+   ll p=v[i]+carry;
+   t2.pb((p%10)+'0');
+   carry=p/10;
+  }
+  while(carry!=0)
+  {
+   t2.pb((carry%10)+'0');
+   carry/=10;
+  }
+
+  reverse(t2.begin(),t2.end());
+  cout<<t2<<endl;
+ }
+}
