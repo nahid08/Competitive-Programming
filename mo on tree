@@ -1,3 +1,4 @@
+///Allah gave me the brain.Allah will help me///
 /*
 Nahid Hossain
 Jahangirnagar University
@@ -15,7 +16,7 @@ Roll:54
 #define pb          push_back
 #define mk          make_pair
 #define pi          acos(-1)
-#define inf         9999999999999999
+#define inf         10e14
 #define mod         1000000007
 #define ull         unsigned long long int
 #define f(i,k,n)    for(ll i=k;i<n;i++)
@@ -26,15 +27,23 @@ Roll:54
 #define mem(a)      memset(a,0,sizeof(a))
 #define vec(v,s)    vector<ll>v[s]
 #define arr(a,s)    ll a[s];
-
+//#define check(n,pos) (n&(1<<pos))
+//#define set(n,pos)  (n|(1<<pos))
+//knight and king//
+int dr[]= {2, 2, -2, -2, 1, -1, 1, -1};
+int dc[]= {1,-1,  1, -1, 2,  2,-2, -2};
+int dr1[]= {0, 0, 0, 1, 1, 1, -1, -1, -1};
+int dc1[]= {-1,0, 1,-1, 0, 1, -1, 0,   1};
+int dr2[]= {0, 0, 1, -1};
+int dc2[]= {1,-1, 0,  0};
+////////////////////////////
 using namespace std;
 
 #define ma 40005
 
-
-ll st[ma],en[ma],lev[ma],a[ma],t[ma][17],n,t1;
 vector<ll>adj[ma];
-ll b[ma*3];
+ll a[ma],b[ma*2],t1,t[ma][19],lev[ma],st[ma],en[ma];
+
 
 
 void dfs(ll u,ll par)
@@ -58,14 +67,13 @@ void dfs(ll u,ll par)
 
 
 
-
 void build(ll n)
 {
  memset(t,-1,sizeof(t));
  t1=0;
 
 
- dfs(1,0);
+ dfs(1,-1);
 
 
  ll i,j;
@@ -89,13 +97,13 @@ ll lca(ll p,ll q)
  ll i,j;
 
 
- for(i=16;i>=0;i--)
+ for(i=18;i>=0;i--)
  {
   if(lev[p]-(1<<i)>=lev[q])p=t[p][i];
  }
  if(p==q)return p;
 
- for(i=16;i>=0;i--)
+ for(i=18;i>=0;i--)
  {
   if(t[p][i]!=-1&&t[q][i]!=-1&&t[p][i]!=t[q][i])
   {
@@ -108,115 +116,187 @@ ll lca(ll p,ll q)
 
 
 
+
+////mo/////////////
+
 struct data
 {
- ll l,r,lc,seg,id;
+ ll l,r,id,lca;
+}q[100005];
 
-};
-
-
+ll block;
 
 bool cmp(data a,data b)
 {
- if(a.seg==b.seg)return a.r<b.r;
- return a.seg<b.seg;
+ ll p=a.l/block;ll p1=b.l/block;
+ if(p!=p1)return p<p1;
+ if(a.r!=b.r)return a.r<b.r;
+ return a.l<b.l;
 }
 
 
-data q[ma*3];
+ll ans[100005],fr[ma],fr1[ma],cn;
 
-
-
-
-void compress()
+void update(ll x)
 {
- map<ll,ll>mp;
- vector<ll>v;
- ll cn=0;
- f(i,1,n+1)
- v.pb(a[i]);
- sort(v.begin(),v.end());
- f(i,0,v.sz)if(mp[v[i]]==0)mp[v[i]]=++cn;
- f(i,1,n+1)a[i]=mp[a[i]];
+ ll k=a[x];
+ if(fr[x]==1)
+ {
+  fr1[k]--;
+  if(fr1[k]==0)cn--;
+  fr[x]^=1;
+ }
+ else
+ {
+  fr1[k]++;
+  if(fr1[k]==1)cn++;
+  fr[x]^=1;
+ }
 }
 
-ll vis[ma*3],mark[ma*3],cn;
-
-void add(ll x)
-{
- if(vis[x]==0)
- {
-  mark[a[x]]++;
-  if(mark[a[x]]==1)cn++;
- }
- else if(vis[x]==1)
- {
-  mark[a[x]]--;
-  if(mark[a[x]]==0)cn--;
- }
-
- vis[x]^=1;
-}
-
-
-
-
-
-
-
-
-
-
+////////////////////////
 int main()
 {
- ll m,u,v,i;
+ ll n,q1,i,j,x,y,tc,m;
 
- ent2(n,m);
+ ios_base::sync_with_stdio(0);
+ cin.tie(0);
+ cout.tie(0);
 
+ cin>>n>>m;
 
- f(i,1,n+1)ent(a[i]);
+ vector<ll>v;
 
+ map<ll,ll>mp;
+
+ f(i,1,n+1)
+ {
+  cin>>a[i];
+  v.pb(a[i]);
+ }
+
+ sort(v.begin(),v.end());
+
+ ll cnt=0;
+
+ f(i,0,v.sz)
+ {
+  if(mp[v[i]]==0)mp[v[i]]=++cnt;
+ }
+
+ f(i,1,n+1)a[i]=mp[a[i]];
 
  f(i,1,n)
  {
-  ent2(u,v);
+  ll u,v;
+  cin>>u>>v;
   adj[u].pb(v);
   adj[v].pb(u);
  }
 
- compress();
-
-
-
-
  build(n);
 
- ll n1=sqrt(t1)+1;
 
 
 
  for(i=1;i<=m;i++)
  {
-  ent2(u,v);
+  ll u,v;
+  cin>>u>>v;
   if(lev[u]>lev[v])swap(u,v);
   ll p=lca(u,v);
 
-  if(p==u)
-  {
-
-   q[i].l=st[u];
-   q[i].r=st[v];
-   q[i].seg=st[u]/n1;
-   q[i].id=i;
-   q[i].lc=0;
-   continue;
-  }
-  q[i].l=en[u];
-  q[i].r=st[v];
-  q[i].seg=en[u]/n1;
-  q[i].lc=p;
   q[i].id=i;
 
+  if(p==u)
+  {
+   q[i].l=st[u];
+   q[i].r=st[v];
+   q[i].lca=0;
+   continue;
+  }
+
+  q[i].l=en[u];
+  q[i].r=st[v];
+  q[i].lca=st[p];
+
  }
+ block=sqrt(t1);
+
+
+ //for(i=1;i<=t1;i++)cout<<b[i]<<" ";
+ //cout<<endl;
+
+
+
+
+
+ sort(q+1,q+m+1,cmp);
+
+
+ ll l=1,r=0;
+
+
+ for(i=1;i<=m;i++)
+ {
+  ll x=q[i].l;
+  ll y=q[i].r;
+  ll id=q[i].id;
+  ll lca=q[i].lca;
+
+  while(r<y)
+  {
+   r++;
+   update(b[r]);
+  }
+
+  while(r>y)
+  {
+   update(b[r]);
+   r--;
+  }
+
+
+  while(l>x)
+  {
+   l--;
+   update(b[l]);
+
+  }
+
+  while(l<x)
+  {
+   update(b[l]);
+   l++;
+  }
+  ll ans1=cn;
+
+
+  if(lca!=0)
+  {
+   ll x=a[b[lca]];
+   if(fr1[x]==0)ans1++;
+  }
+
+  ans[id]=ans1;
+
+
+
+
+
+ }
+
+
+ for(i=1;i<=m;i++)cout<<ans[i]<<endl;
+
+
+
+
+
+
+
+
+
+
 
 }
