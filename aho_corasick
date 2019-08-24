@@ -15,7 +15,7 @@ Roll:54
 #define pb          push_back
 #define mk          make_pair
 #define pi          acos(-1)
-#define inf         9999999999999999
+#define inf         200000000
 #define mod         1000000007
 #define ull         unsigned long long int
 #define f(i,k,n)    for(ll i=k;i<n;i++)
@@ -37,185 +37,169 @@ int dr2[]={0, 0, 1, -1};
 int dc2[]={1,-1, 0,  0};
 ////////////////////////////
 using namespace std;
-#define ma 1000005
 
-const ll maxs=505*505;
-const ll maxc=26;
+#define ma 500*500
 
-ll f[maxs],g[maxs][maxc];
-bitset<500>out[maxs];
+int f[505];
 
-vector<string>v;
+///***********//////////////////////////////////
+struct state {
+    int to[26] ;
+    int depth ;
+    int suffLink ;
+    int par ;
+    int parLet ;
+    int cnt ;
+    int nxt[26] ;
+};
+vector <int> g[ma+500] ;
 
+state states[ma+500];
 
-ll build( )
-{
+int totNodes;
 
- ll i,j;
+inline int add (string &str,ll x) {
+    int cur = 1 ; // root with a empty string
+    int len = str.size() ;
+    for (int i = 0 ; i < len ; i++) {
+        char c = str[i] ;
+        if (!states[cur].to[c-'a']) {
+            states[cur].to[c-'a'] = ++totNodes ;
+            states[totNodes].par = cur ;
+            states[totNodes].depth = states[cur].depth + 1 ;
+            states[totNodes].parLet = c-'a' ;
+        }
+        cur = states[cur].to[c-'a'] ;
+    }
+    states[cur].cnt++;
+    f[x]=cur;
+    return cur ;
+}
 
+void pushLinks() {
+    queue <int> Q ; Q.push(1) ;
+    while (!Q.empty()) {
+        int node = Q.front() ;
+        Q.pop() ;
+        if (states[node].depth <= 1) {
+            states[node].suffLink = 1 ;
+        }
+        else {
+            int cur = states[states[node].par].suffLink ;
+            int parLet = states[node].parLet ;
+            while (cur > 1 and !states[cur].to[parLet]) {
+                cur = states[cur].suffLink ;
+            }
+            if (states[cur].to[parLet]) {
+                cur = states[cur].to[parLet] ;
+            }
+            states[node].suffLink = cur ;
+        }
+        if (node != 1) g[states[node].suffLink].push_back(node) ;
+        for (int i = 0 ; i < 26 ; i++) {
+            if (states[node].to[i]) {
+                Q.push(states[node].to[i]) ;
+            }
+        }
+    }
+}
 
- mem(out);
- memset(f,-1,sizeof(f));
- memset(g,-1,sizeof(g));
-
-
- ll state=1;
-
- for(i=0;i<v.sz;i++)
- {
-  string t=v[i];
-
-  ll currstate=0;
-  ll k=1;
-
-
-  for(j=0;j<t.sz;j++)
-  {
-   ll c=t[j]-'a';
-   if(g[currstate][c]==-1)g[currstate][c]=state++;
-   currstate=g[currstate][c];
-  }
-
-  out[currstate].set(i);
- }
-
-
-
- for(i=0;i<maxc;i++)
- {
-  if(g[0][i]==-1)g[0][i]=0;
- }
-
-
- queue<ll>q;
-
- for(i=0;i<26;i++)
- {
-  if(g[0][i]!=-1&&g[0][i]!=0)
-  {
-   f[g[0][i]]=0;
-   q.push(g[0][i]);
-  }
- }
-
-
-
- while(q.sz>0)
- {
-  ll state=q.front();
-  q.pop();
-  for(i=0;i<26;i++)
-  {
-   if(g[state][i]==-1)continue;
-   ll p=f[state];
-
-
-   while(g[p][i]==-1)
-   {
-    p=f[p];
-   }
-
-   p=g[p][i];
-
-   f[g[state][i]]=p;
-
-   out[g[state][i]]|=out[p];
-
-   q.push(g[state][i]);
-  }
- }
-
-
-
- return state;
-
-
-
-
-
-
-
+void dfs (int u , int p) {
+    if(p != -1) states[u].cnt += states[p].cnt;
+    for (int i = 0 ; i < g[u].size() ; i++) {
+        int v = g[u][i] ;
+        if (v == p) continue ;
+        dfs(v,u) ;
+    }
 }
 
 
+int Next (int from , char ch) {
+    if (states[from].nxt[ch-'a']) return states[from].nxt[ch-'a'] ;
+    int cur = from ;
+    int c = ch - 'a' ;
+    while (cur > 1 and !states[cur].to[c]) {
+        cur = states[cur].suffLink ;
+    }
+    if (states[cur].to[c]) {
+        cur = states[cur].to[c] ;
+    }
+    return states[from].nxt[ch-'a'] = cur;
+}
+
+/////****************//////////////////////
 
 
-ll findstate(ll x,char c)
+string t[505];
+int dp[ma+500];
+void dfs2(ll u,ll par)
 {
- ll p=x;
- ll r=c-'a';
- while(g[p][r]==-1)p=f[p];
- return g[p][r];
+ ll i;
+ for(i=0;i<g[u].sz;i++)
+ {
+  ll p=g[u][i];
+  if(p==par)continue;
+  dfs2(p,u);
+  dp[u]+=dp[p];
+ }
 }
 
 
+void clea()
+{
+ memset(states,0,sizeof(states));
+ for(ll i=0;i<=totNodes;i++)
+ {
+  dp[i]=0;
+  g[i].clr;
+ }
+
+ totNodes=1;
+}
 
 
 int main()
 {
- ll n;
+ ll i,j,n,tc,cas=0;
 
- string t;
-
- ll i,j,tc,cas=0;
-
- ent(tc);
-
+ cin>>tc;
 
  while(tc--)
  {
-  ent(n);
 
-  cin>>t;
+ string t1;
 
+ cin>>n;
 
-  f(i,1,n+1)
-  {
-   string t1;
-   cin>>t1;
-   v.pb(t1);
-  }
+ cin>>t1;
+ totNodes=1;
 
+ for(i=1;i<=n;i++)
+ {
+  cin>>t[i];
+  add(t[i],i);
+ }
 
-  build();
+ pushLinks();
 
+ ll now=1;
 
-  ll ans[n+5];
-  mem(ans);
-  ll k=1;
+ for(i=0;i<t1.sz;i++)
+ {
+  now=Next(now,t1[i]);
+  dp[now]++;
 
-  ll p=0;
-  for(i=0;i<t.sz;i++)
-  {
-   p=findstate(p,t[i]);
+ }
+ dfs2(1,-1);
 
-   if(out[p]==0)continue;
-
-   for(j=0;j<v.sz;j++)
-   {
-    if(out[p].test(j))
-    {
-     ans[j]++;
-    }
-   }
+ pf("Case %lld:\n",++cas);
 
 
-  }
-  pf("Case %lld:\n",++cas);
+ for(i=1;i<=n;i++)cout<<dp[f[i]]<<endl;
 
-
-  f(i,0,n)pf("%lld\n",ans[i]);
-
-  v.clr;
-
-
-
-
+ clea();
  }
 
 
- return 0;
+
 }
-
-
-
