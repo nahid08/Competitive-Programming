@@ -1,0 +1,69 @@
+class scc
+{
+public:
+    vector<ll>adj[ma],adj1[ma];
+    stack<ll>s;
+    ll mark[ma],node,comp[ma],cmp;
+
+    scc(ll n)
+    {
+        node=n;
+        memset(mark,0,sizeof(mark));
+    }
+
+    void add_edge(ll u,ll v)
+    {
+        adj[u].pb(v);
+        adj1[v].pb(u);
+    }
+
+    void dfs(ll u)
+    {
+        ll i;
+        mark[u]=1;
+        for(i=0; i<adj[u].sz; i++)
+        {
+            ll p=adj[u][i];
+            if(mark[p]==0)
+                dfs(p);
+        }
+        s.push(u);
+    }
+
+    void dfs1(ll u)
+    {
+        ll i;
+        mark[u]=1;
+        comp[u]=cmp;
+        for(i=0; i<adj1[u].sz; i++)
+        {
+            ll p=adj1[u][i];
+            if(mark[p]==0)
+                dfs1(p);
+        }
+
+    }
+
+
+    void findscc( )
+    {
+        ll i;
+        for(i=1; i<=node; i++)
+            if(mark[i]==0)
+                dfs(i);
+        memset(mark,0,sizeof(mark));
+        while(s.sz>0)
+        {
+            ll p=s.top();
+            s.pop();
+            if(mark[p]==1)
+                continue;
+            cmp++;
+            dfs1(p);
+        }
+    }
+
+
+
+
+};
