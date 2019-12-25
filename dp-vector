@@ -1,0 +1,74 @@
+ll a[ma],b[ma];
+string t,t1;
+ll a1[ma],b1[ma];
+vector<vector<vector<int> > >dp;
+ll cal(int x,int y,int z)
+{
+    if(x<0)return 0;
+    if(y==0)return (a[x]>=z);//for one
+    if(z==0)return (b[x]>=y);// for zero
+    if(x<0)return 0;
+    if(b[x]<y||a[x]<z)return 0;
+     if(dp[x][y][z]!=-1)return dp[x][y][z];
+    int r=0;
+    if(a1[x]!=-1)
+    {
+        r=cal(a1[x]-1,y,z-1);
+    }
+    if(b1[x]!=-1)
+    {
+        r+=cal(b1[x]-1,y-1,z);
+    }
+    r%=mod;
+    dp[x][y][z]=r;
+    return r;
+}
+int main()
+{
+    ll i,j,k;
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    cin>>t>>t1;
+    if(t.sz<t1.sz)
+    {
+        cout<<"0"<<endl;
+        return 0;
+    }
+    ll pos=-1,pos1=-1;
+    for(i=0;i<t.sz;i++)
+    {
+        a[i]=(t[i]=='1');
+        b[i]=(t[i]=='0');
+        if(i>0)a[i]+=a[i-1];
+        if(i>0)b[i]+=b[i-1];
+        if(t[i]=='1')pos1=i;
+        else pos=i;
+        a1[i]=pos1;
+        b1[i]=pos;
+    }
+    ll z=0,o=0;
+    for(i=0;i<t1.sz;i++)
+    {
+        z+=(t1[i]=='0');
+        o+=(t1[i]=='1');
+    }
+    dp.resize(t.sz+2);
+    for(i=0;i<t.sz;i++)
+    {
+        dp[i].resize(b[i]+2);
+        for(j=0;j<b[i]+2;j++)
+        {
+            dp[i][j].resize(a[i]+2);
+            for(k=0;k<a[i]+2;k++)dp[i][j][k]=-1;
+        }
+    }
+    ll ans=cal(t.sz-1,z,o);
+    cout<<ans<<endl;
+
+
+
+
+
+}
+///https://toph.co/p/distinct-permutations///
