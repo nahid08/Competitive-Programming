@@ -1,35 +1,3 @@
-/*
-Nahid Hossain
-Jahangirnagar University
-Roll:54
-*/
-#include<bits/stdc++.h>
-#define ll          long long int
-#define db          double
-#define pf          printf
-#define sf          scanf
-#define ff          first
-#define ss          second
-#define clr         clear()
-#define sz          size()
-#define pb          push_back
-#define mk          make_pair
-#define pi          acos(-1)
-#define inf         1000000000000000005
-#define mod          998244353
-
-#define q(n)        q.push(n)
-#define ull         unsigned long long int
-#define f(i,k,n)    for(ll i=k;i<n;i++)
-#define fr(i,n,k)   for(ll i=n;i>=k;i--)
-#define ent(a)      scanf("%lld",&a)
-#define ent2(a,b)   scanf("%lld%lld",&a,&b)
-#define ent3(a,b,c) scanf("%lld%lld%lld",&a,&b,&c)
-#define mem(a)      memset(a,0,sizeof(a))
-#define mem1(a)     memset(a,-1,sizeof(a))
-#define vec(v,s)    vector<ll>v[s]
-#define arr(a,s)    ll a[s]
-
 using namespace std;
 #define ma 100006
 ll dis[21][100005],mark[ma],sub[ma],t,pa[ma],lvl[ma],ans[ma];
