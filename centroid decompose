@@ -1,142 +1,89 @@
-using namespace std;
-#define ma 100006
-ll dis[21][100005],mark[ma],sub[ma],t,pa[ma],lvl[ma],ans[ma];
-vector<ll>adj[ma];
+vector<pair<ll,ll> >adj[ma];
+ll sub[ma],t,mark[ma],b[ma],d[ma][22],le[ma];
+vector<ll>e[ma],e1[ma];
 
-
-void dfs2(ll u,ll par)
+void dfs(ll u, ll par)
 {
- f(i,0,adj[u].sz)
- {
-  ll p=adj[u][i];
-  if(p==par)continue;
-  ans[p]=ans[u]+1;
-  dfs2(p,u);
- }
+    t++;
+    sub[u]=1;
+    for(auto x:adj[u])
+    {
+        if(x.ff==par||mark[x.ff])continue;
+        dfs(x.ff,u);
+        sub[u]+=sub[x.ff];
+    }
 }
 
-void dfs(ll u,ll par)
+ll fin(ll u,ll par)
 {
- t++;
- sub[u]=1;
- f(i,0,adj[u].sz)
- {
-  ll p=adj[u][i];
-  if(par==p||mark[p]==1)continue;
-  dfs(p,u);
-  sub[u]+=sub[p];
- }
+    for(auto x:adj[u])
+    {
+        if(x.ff==par||mark[x.ff])continue;
+        if(sub[x.ff]>t/2)return fin(x.ff,u);
+    }
+    return u;
 }
 
-
-
-ll fin_center(ll u,ll par)
+void cal(ll u,ll par,ll lev,ll c)
 {
- f(i,0,adj[u].sz)
- {
-  ll p=adj[u][i];
-  if(p==par||mark[p]==1)continue;
-  if(sub[p]>t/2)return fin_center(p,u);
- }
- return u;
+    ll cost=d[u][lev];
+    e[c].pb(cost);
+    if(b[c]!=-1)e1[c].pb(d[u][le[b[c]]]);
+    for(auto x:adj[u])
+    {
+        if(x.ff==par||mark[x.ff])continue;
+        d[x.ff][lev]=d[u][lev]+x.ss;
+        cal(x.ff,u,lev,c);
+    }
 }
 
-
-
-void cal(ll u,ll par,ll lev)
+void centroid(ll u,ll par,ll lev)
 {
- f(i,0,adj[u].sz)
- {
-  ll p=adj[u][i];
-  if(p==par||mark[p]==1)continue;
-  dis[lev][p]=dis[lev][u]+1;
-  cal(p,u,lev);
- }
+    t=0;dfs(u,par);
+    ll c=fin(u,par);
+    mark[c]=1;
+    b[c]=par;le[c]=lev;
+    cal(c,par,lev,c);
+    sort(e[c].begin(),e[c].end());
+    sort(e1[c].begin(),e1[c].end());
+    for (auto x:adj[c])
+    {
+        if(mark[x.ff])continue;
+        centroid(x.ff,c,lev+1);
+    }
 }
-
-
-
-
-
-void centriod(ll u,ll par,ll lev)
-{
- t=0;
- dfs(u,par);
- ll c=fin_center(u,par);
- lvl[c]=lev;
- mark[c]=1;
- pa[c]=par;
- dis[lev][c]=0;
- cal(c,par,lev);
-
- f(i,0,adj[c].sz)
- {
-  ll p=adj[c][i];
-  if(mark[p]==1)continue;
-  centriod(p,c,lev+1);
- }
-}
-
-
-
 
 int main()
 {
- ll n,m,i,u,v;
- while(cin>>n>>m)
- {
-  for(i=1;i<n;i++)
-  {
-   ent2(u,v);
-   adj[u].pb(v);
-   adj[v].pb(u);
-  }
-  ans[1]=0;
-  dfs2(1,-1);
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);cout.tie(0);
+    ll n,q,i,j,u,v,c,l;
+    while(cin>>n>>q)
+    {
+        for(i=1;i<n;i++)
+        {
+            cin>>u>>v>>c;
+            adj[u].pb(mk(v,c));
+            adj[v].pb(mk(u,c));
+        }
+        centroid(1,-1,0);
 
-  mem(mark);
-  centriod(1,-1,1);
-
-
-
-  while(m--)
-  {
-   ent2(v,u);
-   if(v==1)
-   {
-   ll p=u;
-   while(1)
-   {
-    ans[p]=min(ans[p],dis[lvl[p]][u]);
-    p=pa[p];
-    if(p==-1)break;
-   }
-
-   continue;
-   }
-
-   ll p=u;
-   ll min1=inf;
-   while(1)
-   {
-    //cout<<p<<endl;
-    ll r=ans[p]+dis[lvl[p]][u];
-    min1=min(r,min1);
-    p=pa[p];
-    if(p==-1)break;
-   }
+        while(q--)
+        {
+            cin>>v>>l;
+            ll t=v,ans=0,l1=l,tmp;
+            while(1)
+            {
+                ans+=upper_bound(e[v].begin(),e[v].end(),l)-e[v].begin();
+                tmp=v;v=b[v];
+                if(v==-1)break;l=l1-d[t][le[v]];
+                ans-=upper_bound(e1[tmp].begin(),e1[tmp].end(),l)-e1[tmp].begin();
+            }
+            cout<<ans<<endl;
+        }
 
 
-   cout<<min1<<endl;
-
-
-  }
-
-
-
- }
-
-
- return 0;
-
+    }
+    return 0;
 }
+
