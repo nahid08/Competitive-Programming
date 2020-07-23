@@ -84,3 +84,17 @@ namespace PollardRho{
         return v;
     }
 }
+
+int main()
+{
+    ll tc,n,i,j,l,r,c;
+    PollardRho::init();
+    cin>>tc;
+    while(tc--)
+    {
+        cin>>l>>r>>c;
+        vector<ll>v;
+        v=PollardRho::factorize(c);
+    }
+    return 0;
+}
